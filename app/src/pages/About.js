@@ -1,7 +1,5 @@
 import { Container, Row, Col } from "react-bootstrap";
 import about from "../assets/img/about.webp"
-import about2 from "../assets/img/about2.webp"
-import about3 from "../assets/img/about3.webp"
 
 
 export const About = () =>{

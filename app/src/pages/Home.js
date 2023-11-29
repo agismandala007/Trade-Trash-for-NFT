@@ -1,6 +1,10 @@
-import { Container, Row, Col } from "react-bootstrap";
+import { useState } from "react";
+import { Container, Row, Col, Carousel } from "react-bootstrap";
 import bg from "../assets/img/home.webp"
+import bnr from "../assets/img/bnr.webp"
 import { About } from "./About";
+import CarouselImage from '../assets/img/home.webp';
+
 
 
 export const Home = () =>{
