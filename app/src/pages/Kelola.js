@@ -49,6 +49,17 @@ export const Kelola = () =>{
         args: [textCategory, textTokenURI]
     });
     const {write: writeAddCategory } = useContractWrite(configAddCategory)
+    const handleAddCategory = async () => {
+        try {
+            if (window.confirm('Apakah Anda yakin ingin menambahkan kategori?')) {
+                await writeAddCategory();
+                window.alert('Silahkan konfirmasi untuk melanjutkan transaksi');
+            }
+        } catch (error) {
+            console.error('Error adding category:', error);
+            window.alert('Failed to add category. Please check the console for more details.');
+        }
+    };
 
     // Handle Add Admin
     const {config: configAddAdmin} = usePrepareContractWrite({
@@ -58,6 +69,17 @@ export const Kelola = () =>{
         args: [textUser]
     });
     const {write: writeAddAdmin} = useContractWrite(configAddAdmin)
+    const handleAddAdmin = async () => {
+        try {
+            if (window.confirm('Apakah Anda yakin ingin menambahkan admin?')) {
+                await writeAddAdmin();
+                window.alert('Admin added successfully!');
+            }
+        } catch (error) {
+            console.error('Error adding admin:', error);
+            window.alert('Failed to add admin. Please check the console for more details.');
+        }
+    };
 
     // Handle is admin exist
     const { data: dataIsAdmin } = useContractRead({
@@ -88,6 +110,18 @@ export const Kelola = () =>{
         ]
     });
     const {write: writeTradeTrash} = useContractWrite(configTradeTrash)
+    const handleTradeTrash = async () => {
+        try {
+            if (window.confirm('Apakah Anda yakin ingin melakukan penukaran Sampah menjadi NFT ?')) {
+                await writeTradeTrash();
+                window.alert('Silahkan konfirmasi untuk melanjutkan transaksi');
+            }
+        } catch (error) {
+            console.error('Error Trade Trash:', error);
+            window.alert('Failed to Trade Trash. Please check the console for more details.');
+        }
+    };
+
 
     // Handle NFT Exchange
     const {config: configNFTExchange} = usePrepareContractWrite({
@@ -101,12 +135,31 @@ export const Kelola = () =>{
         ]
     });
     const {write: writeNFTExchange} = useContractWrite(configNFTExchange)
+    const handleNFTExchange = async () => {
+        try {
+            if (window.confirm('Apakah Anda yakin ingin melakukan penukaran NFT ?')) {
+                await writeNFTExchange();
+                window.alert('Silahkan konfirmasi untuk melanjutkan transaksi');
+            }
+        } catch (error) {
+            console.error('Error NFT Exchange:', error);
+            window.alert('Failed to NFT Exchange. Please check the console for more details.');
+        }
+    };
 
 
+    const { data: Auth } = useContractRead({
+        address: contractAddressNFTSampah,
+        abi: NFTSampahAbi,
+        functionName: 'is_admin',
+        args: [address]
+    });
+    const isAdmin = Auth && Auth !== '';
 
 
     return(
         <section className="kelola">
+            {isAdmin ? (
             <Container>
             <div className="box-kelola">
                 <Row>
@@ -130,7 +183,7 @@ export const Kelola = () =>{
                                 />
                             </Form.Group>
                             <Button variant="primary" 
-                            onClick={writeAddCategory}
+                            onClick={handleAddCategory}
                             disabled={textCategory && textTokenURI ? false : true}
                             >SUBMIT</Button>
                             </Form>
@@ -151,7 +204,7 @@ export const Kelola = () =>{
                                  />
                             </Form.Group>
                             <Button variant="primary" 
-                            onClick={writeAddAdmin}
+                            onClick={handleAddAdmin}
                             disabled={textUser ? false : true}
                             >SUBMIT</Button>
                             </Form>
@@ -224,7 +277,7 @@ export const Kelola = () =>{
                                 />
                             </Form.Group>
                             <Button variant="primary" 
-                            onClick={writeTradeTrash}
+                            onClick={handleTradeTrash}
                             disabled={textOwnerName && textOwnerAddress && textWeight && textCategory ? false : true}
                             >SUBMIT</Button>
                             </Form>
@@ -258,7 +311,7 @@ export const Kelola = () =>{
                                 />
                             </Form.Group>
                             <Button variant="primary" 
-                            onClick={writeNFTExchange}
+                            onClick={handleNFTExchange}
                             disabled={textOwnerAddress && textTokenId && textSembako ? false : true}
                             >SUBMIT</Button>
                             </Form>
@@ -268,6 +321,16 @@ export const Kelola = () =>{
                 </Row>
                 </div>
                 </Container>
+                    ) : (
+                    <Container>
+                        <Row>
+                            <Col>
+                                <h1>Hanya Admin Yang Dapat Melakukan Transaksi Pada Menu ini, Silahkan Connect Wallet Sebagain Admin Terlebih dahulu.</h1>
+                            </Col>
+                        </Row>
+                    </Container>
+                    )
+                }
         </section>
     )
 }

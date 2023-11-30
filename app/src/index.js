@@ -52,7 +52,7 @@ const projectId = String(process.env.REACT_APP_WALLET_CONNECT);
 
 const { connectors } = getDefaultWallets({
   appName: 'GreatEdu Final Project Kelompok 2',
-  projectId,
+  projectId: 'FinalProject',
   chains
 });
 const wagmiConfig = createConfig({
