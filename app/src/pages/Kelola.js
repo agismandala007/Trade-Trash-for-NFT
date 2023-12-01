@@ -38,8 +38,8 @@ export const Kelola = () =>{
 
 
     const { address } = useAccount();
-    const contractAddressNFTSampah = '0x5d5a45382C864f6344a4dF2d9FcB5e52f863fCb2';
-    const contractAddressSampah = '0xa35225546D6Dcdb404c5180391D1AC36cb61F0F4';
+    const contractAddressNFTSampah = '0x16528DA5DbfD3F8666875a786D98dafB12f7d6c9';
+    const contractAddressSampah = '0xC4AC24e9618283Dc42C39D0bd93826155d942153';
 
     // Handle Add Category
     const {config: configAddCategory } = usePrepareContractWrite({
@@ -73,7 +73,7 @@ export const Kelola = () =>{
         try {
             if (window.confirm('Apakah Anda yakin ingin menambahkan admin?')) {
                 await writeAddAdmin();
-                window.alert('Admin added successfully!');
+                window.alert('Silahkan konfirmasi untuk melanjutkan transaksi');
             }
         } catch (error) {
             console.error('Error adding admin:', error);
@@ -325,7 +325,7 @@ export const Kelola = () =>{
                     <Container>
                         <Row>
                             <Col>
-                                <h1>Hanya Admin Yang Dapat Melakukan Transaksi Pada Menu ini, Silahkan Connect Wallet Sebagain Admin Terlebih dahulu.</h1>
+                                <h1>Hanya Admin Yang Dapat Melakukan Transaksi Pada Menu ini, Silahkan Connect Wallet Sebagai Admin Terlebih dahulu.</h1>
                             </Col>
                         </Row>
                     </Container>

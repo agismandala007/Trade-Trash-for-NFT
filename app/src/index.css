@@ -300,7 +300,6 @@ nav.navbar .navbar-nav .nav-link.navbar-link.active{
 /* Kelola */
 .kelola{
   background-color: #f0f0f0;
-  height: 200vh;
   background-image: url("/src/assets/img/bnr.webp");
   padding: 250px 0px 100px 0px;
   background-repeat: repeat;
