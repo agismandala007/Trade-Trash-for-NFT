@@ -3,11 +3,12 @@ pragma solidity ^0.8.0;
 
 import "./interface/INFTRewardSampah.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
-contract Sampah is Ownable(msg.sender) {
+contract Sampah is Ownable(msg.sender), ERC721 {
     INFTRewardSampah public nft;
 
-    constructor(address nft_address) {
+    constructor(address nft_address) ERC721("NFT Reward Sampah", "NRS") {
         is_admin[msg.sender] = true;
         nft = INFTRewardSampah(nft_address);
     }
@@ -16,29 +17,33 @@ contract Sampah is Ownable(msg.sender) {
         string owner_name;
         address owner_address;
         uint256 weight;
-        string[] image_proof_uri;
         uint256 token_reward_id;
         uint256 date;
     }
 
-    // min weight is in gram
+    struct Exchange {
+        address owner_name;
+        uint256 tokenId;
+        string sembako;
+    }
+
     uint256 public min_weight = 1000;
 
     Trade[] public trades;
-    // for history purpose
-    mapping(address => Trade[]) public owner_trades;
-    // mapping of admin
-    mapping(address => bool) public is_admin;
+    Exchange[] public change;
 
-    // mapping of min weight to category
+    mapping(address => Trade[]) public owner_trades;
+    mapping(address => bool) public is_admin;
     mapping(uint256 => string) public min_weight_category;
+
+    event deleteEvent(uint256 token);
 
     modifier onlyAdmin() {
         require(is_admin[msg.sender], "only admin can perform this action");
         _;
     }
 
-    function addAdmin(address user) public {
+    function addAdmin(address user) public onlyOwner {
         is_admin[user] = true;
         nft.addAdmin(user);
     }
@@ -51,19 +56,49 @@ contract Sampah is Ownable(msg.sender) {
         min_weight = _min_weight;
     }
 
+    function tokenIdExist(
+        address _owner_address,
+        uint256 _tokenId
+    ) public view returns (bool isExist) {
+        isExist = false;
+
+        Trade[] storage ownerList = owner_trades[_owner_address];
+
+        for (uint256 i = 0; i < ownerList.length; i++) {
+            if (ownerList[i].token_reward_id == _tokenId) {
+                isExist = true;
+            }
+        }
+
+        return (isExist);
+    }
+
+    function deleteTrash(address _owner_address, uint256 _tokenId) public {
+        Trade[] storage ownerList = owner_trades[_owner_address];
+
+        for (uint256 i = 0; i < ownerList.length; i++) {
+            if (ownerList[i].token_reward_id == _tokenId) {
+                delete ownerList[i];
+
+                ownerList[i] = ownerList[ownerList.length - 1];
+                ownerList.pop();
+
+                emit deleteEvent(_tokenId);
+            }
+        }
+    }
+
     function addCategory(
         string memory category_name,
         string memory token_uri
-    ) public onlyAdmin{
+    ) public onlyAdmin {
         nft.addCategory(category_name, token_uri);
     }
 
-    // weight is in gram
     function tradeTrash(
         string memory _owner_name,
         address _owner,
         uint256 _weight,
-        string[] memory _image_proof,
         string memory category
     ) public onlyAdmin {
         require(nft.isCategoryExist(category), "Reward category is not exist");
@@ -77,7 +112,6 @@ contract Sampah is Ownable(msg.sender) {
             owner_name: _owner_name,
             owner_address: _owner,
             weight: _weight,
-            image_proof_uri: _image_proof,
             token_reward_id: tokenId,
             date: block.timestamp
         });
@@ -92,13 +126,25 @@ contract Sampah is Ownable(msg.sender) {
         return owner_trades[_owner];
     }
 
-    // additional function
-    // you can add function to trade the nft by category to exchange to token or what you want
+    function nftExchange(
+        address _owner_address,
+        uint256 _tokenId,
+        string memory _sembako
+    ) public payable onlyAdmin {
+        require(
+            tokenIdExist(_owner_address, _tokenId),
+            "The Address or token id is not found"
+        );
 
-    function nftExchange(uint256 tokenId, string memory sembako) public {
-        require(nft.ownerOf(tokenId) == msg.sender, "You are not the owner of the NFT");
-        require(!nftBurned[tokenId], "NFT has already been burned");
+        Exchange memory coupon = Exchange({
+            owner_name: _owner_address,
+            tokenId: _tokenId,
+            sembako: _sembako
+        });
 
-        _burn(tokenId);
+        change.push(coupon);
+        nft.nftBurn(_tokenId);
+
+        deleteTrash(_owner_address, _tokenId);
     }
 }

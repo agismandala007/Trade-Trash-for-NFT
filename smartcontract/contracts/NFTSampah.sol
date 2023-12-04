@@ -2,12 +2,12 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract NFTSampah is ERC721URIStorage, Ownable(msg.sender) {
-    using Counters for Counters.Counter;
-    Counters.Counter private _tokenIds;
+contract NFTSampah is Ownable(msg.sender), ERC721URIStorage {
+    // using Counters for Counters.Counter;
+    // Counters.Counter private _tokenIds;
+    uint256 private _tokenIds;
 
     // list of category
     string[] public categories;
@@ -57,13 +57,16 @@ contract NFTSampah is ERC721URIStorage, Ownable(msg.sender) {
         string memory category
     ) public onlyAdmin returns (uint256) {
         require(isCategoryExist(category), "NFT category is not exist");
-        uint256 newItemId = _tokenIds.current();
+        uint256 newItemId = _tokenIds++;
 
         _mint(target, newItemId);
         _setTokenURI(newItemId, category_to_uri[category]);
         token_to_category[newItemId] = category;
 
-        _tokenIds.increment();
         return newItemId;
+    }
+
+    function nftBurn(uint256 tokenId) public onlyAdmin {
+        _burn(tokenId);
     }
 }
