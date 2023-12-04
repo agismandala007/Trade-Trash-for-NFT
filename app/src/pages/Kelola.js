@@ -38,8 +38,8 @@ export const Kelola = () =>{
 
 
     const { address } = useAccount();
-    const contractAddressNFTSampah = '0x16528DA5DbfD3F8666875a786D98dafB12f7d6c9';
-    const contractAddressSampah = '0xC4AC24e9618283Dc42C39D0bd93826155d942153';
+    const contractAddressNFTSampah = '0x71e1EA6fbaB97263203b92E8ac90a218479045A1';
+    const contractAddressSampah = '0x02053030D8cF2dB2C17891c2d6049391B97fBa98';
 
     // Handle Add Category
     const {config: configAddCategory } = usePrepareContractWrite({
